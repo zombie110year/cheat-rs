@@ -8,7 +8,7 @@ use std::collections::hash_map::HashMap;
 
 /// ## Configure
 pub struct Configure {
-    content: HashMap<&'static str, &'static str>
+    content: HashMap<&'static str, &'static str>,
 }
 
 impl Configure {
@@ -28,7 +28,7 @@ impl Configure {
         // insert default value
         map.insert("EDITOR", getEditor());
 
-        Configure{content: map}
+        Configure { content: map }
     }
     /// get a value stored in Configure.
     /// copy data and move ownership.
