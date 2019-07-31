@@ -121,7 +121,7 @@ impl Sheet {
         if self.exists() {
             println!("{}", read_to_string(self.path()).expect("read file error"));
         } else {
-            panic!("FileNotFoundError: {}", self.name());
+            println!("FileNotFoundError: {}", self.name());
         }
     }
 }
