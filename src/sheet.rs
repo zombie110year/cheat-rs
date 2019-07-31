@@ -8,6 +8,7 @@
 /// and use Markdown Syntax.
 ///
 use dirs::home_dir;
+use std::fs::read_to_string;
 use std::path::PathBuf;
 
 /// where to store cheat sheets' files
@@ -92,6 +93,24 @@ impl Sheet {
         };
         let path = home.join(CHEAT_DIR).join(self.name());
         return path;
+    }
+    /// edit sheet's file(todo)
+    ///
+    /// It will call the editor which depends on the system.
+    /// In **Windows**, It's *notepad.exe*,
+    /// In **Linux**, It's *vim*
+    ///
+    /// Wherever you edit, it will save content as utf-8 string.
+    pub fn edit(&self) {
+        unimplemented!();
+    }
+    /// read sheet's content
+    pub fn read(&self) {
+        if self.exists() {
+            println!("{}", read_to_string(self.path()).expect("read file error"));
+        } else {
+            panic!("FileNotFoundError: {}", self.name());
+        }
     }
 }
 
