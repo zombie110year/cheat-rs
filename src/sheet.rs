@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
+use super::config::Configure;
 /// # Sheet
 ///
 /// Discover and Read sheet file.
@@ -11,6 +12,7 @@ use dirs::home_dir;
 use std::fs::read_to_string;
 use std::fs::write;
 use std::path::PathBuf;
+use std::process::Command;
 
 /// where to store cheat sheets' files
 const CHEAT_DIR: &str = ".cheat";
@@ -103,9 +105,7 @@ impl Sheet {
     ///
     /// Wherever you edit, it will save content as utf-8 string.
     pub fn edit(&self) {
-        if self.exists() {
-            ;
-        } else {
+        if !self.exists() {
             write(self.path(), b"").expect("FileWriteError");
             println!(
                 "file created: {}",
@@ -114,7 +114,11 @@ impl Sheet {
                     .expect("can't transfer PathBuf to &str")
             );
         }
-        unimplemented!();
+        let config = Configure::new();
+        Command::new(config.get("EDITOR"))
+            .arg(self.path())
+            .output()
+            .expect("failed to execute subprocess");
     }
     /// read sheet's content
     pub fn read(&self) {

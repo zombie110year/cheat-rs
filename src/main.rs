@@ -1,27 +1,69 @@
 #![allow(non_snake_case)]
 
 use cheat::sheet;
-use clap::{App, Arg, ArgMatches};
+use clap::{self, App, Arg, SubCommand};
 
 fn main() {
-    let args = getArgs();
-    let name = args.value_of("NAME").unwrap();
-    let s = sheet::Sheet::new(String::from(name));
-    s.read();
+    let args = getParser().get_matches();
+    match args.subcommand_name() {
+        Some("edit") => {
+            let name = args
+                .subcommand_matches("edit")
+                .unwrap()
+                .value_of("EDITNAME")
+                .unwrap();
+            let s = sheet::Sheet::new(String::from(name));
+            s.edit();
+        }
+        Some("read") => {
+            let name = args
+                .subcommand_matches("read")
+                .unwrap()
+                .value_of("READNAME")
+                .unwrap();
+            let s = sheet::Sheet::new(String::from(name));
+            s.read();
+        }
+        Some(&_) | None => {
+            panic!("SubcommandParseError");
+        }
+    }
 }
 
-fn getArgs() -> ArgMatches<'static> {
-    let matches = App::new("Cheat Sheet Manager")
-        .version("0.1.0")
-        .author("Zombie110year <zombie110year@outlook.com>")
-        .about("works as what the name described.")
-        .arg(
-            Arg::with_name("NAME")
-                .help("which cheat sheet to display")
-                .required(true)
-                .index(1),
+fn getParser() -> App<'static, 'static> {
+    App::new("Cheat Sheet Manager")
+        .version(clap::crate_version!())
+        .author(clap::crate_authors!())
+        .about(clap::crate_description!())
+        .subcommand(
+            SubCommand::with_name("edit")
+                .about("edit target sheet")
+                .author(clap::crate_authors!())
+                .version(clap::crate_version!())
+                .arg(
+                    Arg::with_name("EDITNAME")
+                        .help("which cheat sheet to display")
+                ),
         )
-        .get_matches();
+        .subcommand(
+            SubCommand::with_name("read")
+                .about("show target sheet")
+                .author(clap::crate_authors!())
+                .version(clap::crate_version!())
+                .arg(
+                    Arg::with_name("READNAME")
+                        .help("which cheat sheet to display")
+                ),
+        )
+}
 
-    return matches;
+#[cfg(test)]
+#[test]
+fn test_getArgs() {
+    let parser = getParser();
+    let m = parser.get_matches_from(vec!["cheat", "show", "hello"]);
+    assert_eq!(m.value_of("NAME").unwrap(), "hello");
+    if let Some(sub_m) = m.subcommand_matches("show") {
+        sub_m.value_of("NAME");
+    }
 }
