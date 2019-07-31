@@ -120,5 +120,4 @@ mod tests {
             cheat_dir.join("no-one-will-call-this-name.jfksjdkfksdjkfjkadf")
         );
     }
-
 }
