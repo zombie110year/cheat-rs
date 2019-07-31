@@ -9,6 +9,7 @@
 ///
 use dirs::home_dir;
 use std::fs::read_to_string;
+use std::fs::write;
 use std::path::PathBuf;
 
 /// where to store cheat sheets' files
@@ -102,6 +103,17 @@ impl Sheet {
     ///
     /// Wherever you edit, it will save content as utf-8 string.
     pub fn edit(&self) {
+        if self.exists() {
+            ;
+        } else {
+            write(self.path(), b"").expect("FileWriteError");
+            println!(
+                "file created: {}",
+                self.path()
+                    .to_str()
+                    .expect("can't transfer PathBuf to &str")
+            );
+        }
         unimplemented!();
     }
     /// read sheet's content
