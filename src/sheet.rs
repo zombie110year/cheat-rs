@@ -117,7 +117,7 @@ impl Sheet {
         let config = Configure::new();
         Command::new(config.get("EDITOR"))
             .arg(self.path())
-            .output()
+            .status()
             .expect("failed to execute subprocess");
     }
     /// read sheet's content
