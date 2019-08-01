@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 
 use cheat::sheet;
+use cheat::search::{listSheets, searchSheet};
 use clap::{self, App, Arg, SubCommand};
 
 fn main() {
@@ -14,7 +15,7 @@ fn main() {
                 .unwrap();
             let s = sheet::Sheet::new(String::from(name));
             s.edit();
-        }
+        },
         Some("read") => {
             let name = args
                 .subcommand_matches("read")
@@ -23,6 +24,12 @@ fn main() {
                 .unwrap();
             let s = sheet::Sheet::new(String::from(name));
             s.read();
+        },
+        Some("list") => {
+            listSheets();
+        },
+        Some("search") => {
+
         }
         Some(&_) | None => {
             panic!("SubcommandParseError");
@@ -40,20 +47,27 @@ fn getParser() -> App<'static, 'static> {
                 .about("edit target sheet")
                 .author(clap::crate_authors!())
                 .version(clap::crate_version!())
-                .arg(
-                    Arg::with_name("EDITNAME")
-                        .help("which cheat sheet to display")
-                ),
+                .arg(Arg::with_name("EDITNAME").help("which cheat sheet to display")),
         )
         .subcommand(
             SubCommand::with_name("read")
                 .about("show target sheet")
                 .author(clap::crate_authors!())
                 .version(clap::crate_version!())
-                .arg(
-                    Arg::with_name("READNAME")
-                        .help("which cheat sheet to display")
-                ),
+                .arg(Arg::with_name("READNAME").help("which cheat sheet to display")),
+        )
+        .subcommand(
+            SubCommand::with_name("list")
+                .about("list all sheets")
+                .author(clap::crate_authors!())
+                .version(clap::crate_version!()),
+        )
+        .subcommand(
+            SubCommand::with_name("search")
+                .about("search sheets match regex pattern")
+                .author(clap::crate_authors!())
+                .version(clap::crate_version!())
+                .arg(Arg::with_name("PATTERN").help("regex pattern")),
         )
 }
 

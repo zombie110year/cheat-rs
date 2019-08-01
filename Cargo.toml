@@ -10,3 +10,4 @@ description = "manage cheat sheets"
 [dependencies]
 dirs = "2.0.2"
 clap = "2.33.0"
+chrono = "0.4.7"
