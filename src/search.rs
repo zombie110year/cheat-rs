@@ -15,9 +15,11 @@ pub fn listSheets() {
             Ok(entry) => {
                 let metadata = entry.metadata().unwrap();
                 let path = entry.path();
-                let path = path.to_str().unwrap();
+                let filename = path.file_name().unwrap()
+                    .to_str().unwrap();
                 let mtime: DateTime<Local> = DateTime::from(metadata.modified().unwrap());
-                println!("{} {}", path, mtime);
+                let mtime = mtime.format("%Y-%m-%d %H:%M:%S");
+                println!("{} {}", filename, mtime);
             },
             Err(_) => {
                 panic!("error in listSheets");
