@@ -1,11 +1,12 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 use super::config::Configure;
+use crate::{CHEAT_DIR, SHEET_DIR};
 /// # Sheet
 ///
 /// Discover and Read sheet file.
 ///
-/// The sheet file stored at ~/.cheat/ with out extension name
+/// The sheet file stored at ~/.cheat/sheet with out extension name
 /// and use Markdown Syntax.
 ///
 use dirs::home_dir;
@@ -13,9 +14,6 @@ use std::fs::read_to_string;
 use std::fs::write;
 use std::path::PathBuf;
 use std::process::Command;
-
-/// where to store cheat sheets' files
-const CHEAT_DIR: &str = ".cheat";
 
 /// ## Sheet
 ///
@@ -88,13 +86,8 @@ impl Sheet {
     /// assert_eq!(s.path(), cheat_dir.join(s.name()));
     /// ```
     pub fn path(&self) -> PathBuf {
-        let home: PathBuf = match home_dir() {
-            Some(p) => p,
-            None => {
-                panic!("Cannot get HOME directory's path!");
-            }
-        };
-        let path = home.join(CHEAT_DIR).join(self.name());
+        let home: PathBuf = home_dir().expect("crate::sheet/ impl Sheet / fn path: home_dir error");
+        let path = home.join(CHEAT_DIR).join(SHEET_DIR).join(self.name());
         return path;
     }
     /// edit sheet's file(todo)
@@ -149,7 +142,10 @@ mod tests {
         let s = Sheet::new(String::from(
             "no-one-will-call-this-name.jfksjdkfksdjkfjkadf",
         ));
-        let cheat_dir = home_dir().expect("dirs::home_dir error").join(CHEAT_DIR);
+        let cheat_dir = home_dir()
+            .expect("dirs::home_dir error")
+            .join(CHEAT_DIR)
+            .join(SHEET_DIR);
         assert_eq!(
             s.path(),
             cheat_dir.join("no-one-will-call-this-name.jfksjdkfksdjkfjkadf")

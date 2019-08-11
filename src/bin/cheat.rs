@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
 
-use cheat::sheet;
+use cheat::init;
 use cheat::search::{displaySheets, searchSheet};
+use cheat::sheet;
 use clap::{self, App, Arg, SubCommand};
 
 fn main() {
+    init();
     let args = getParser().get_matches();
     match args.subcommand_name() {
         Some("edit") => {
@@ -15,7 +17,7 @@ fn main() {
                 .unwrap();
             let s = sheet::Sheet::new(String::from(name));
             s.edit();
-        },
+        }
         Some("read") => {
             let name = args
                 .subcommand_matches("read")
@@ -24,13 +26,11 @@ fn main() {
                 .unwrap();
             let s = sheet::Sheet::new(String::from(name));
             s.read();
-        },
+        }
         Some("list") => {
             displaySheets();
-        },
-        Some("search") => {
-
         }
+        Some("search") => {}
         Some(&_) | None => {
             panic!("SubcommandParseError");
         }
