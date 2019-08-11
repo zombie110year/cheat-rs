@@ -21,6 +21,7 @@ pub fn init() {
             builder
                 .create(dir.as_path())
                 .expect("crate/ fn init: DirBuilder.create error");
+            println!("created dir {}", dir.to_str().unwrap());
         }
     }
 }
