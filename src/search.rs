@@ -6,9 +6,10 @@
 use crate::{CHEAT_DIR, SHEET_DIR};
 use crate::Sheet;
 use dirs::home_dir;
+use fuzzy_matcher::skim::fuzzy_match;
 
-pub fn displaySheets() {
-    let list = listSheets();
+/// display sheet list
+pub fn displaySheets(list: &Vec<Sheet>) {
     let mut max_length: (usize, usize) = (0, 0);
     for item in list.iter() {
         let (name, mtime) = (
@@ -52,7 +53,8 @@ pub fn displaySheets() {
     }
 }
 
-fn listSheets() -> Vec<Sheet> {
+/// list all existing sheets
+pub fn listSheets() -> Vec<Sheet> {
     let mut info: Vec<Sheet> = Vec::new();
     let dir = home_dir().unwrap().join(CHEAT_DIR).join(SHEET_DIR);
     for file in dir
@@ -74,6 +76,30 @@ fn listSheets() -> Vec<Sheet> {
     return info;
 }
 
-pub fn searchSheet() -> Vec<String> {
-    vec![]
+pub fn searchSheet(pattern: String) -> Vec<Sheet> {
+    let list = listSheets();
+    let mut target: Vec<Sheet> = Vec::new();
+    for item in list {
+        let name = item.name();
+        if matchSheet(name.as_str(), &pattern.as_str()) {
+            target.push(item);
+        }
+    }
+    return target;
+}
+
+fn matchSheet(name: &str, pattern: &str) -> bool {
+    return fuzzy_match(name, pattern).is_some();
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_matches() {
+        assert!(matchSheet("hello", "hel"));
+        assert!(!matchSheet("vector", "vocter"));
+        assert!(matchSheet("zombie110year", "Zombie110year"));
+    }
 }

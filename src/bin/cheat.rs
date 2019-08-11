@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use cheat::init;
-use cheat::search::{displaySheets, searchSheet};
+use cheat::search::{displaySheets, searchSheet, listSheets};
 use cheat::sheet;
 use clap::{self, App, Arg, SubCommand};
 
@@ -28,11 +28,20 @@ fn main() {
             s.read();
         }
         Some("list") => {
-            displaySheets();
+            let list = listSheets();
+            displaySheets(&list);
         }
-        Some("search") => {}
+        Some("search") => {
+            let pattern = args
+                .subcommand_matches("search")
+                .unwrap()
+                .value_of("PATTERN")
+                .unwrap();
+            let result = searchSheet(String::from(pattern));
+            displaySheets(&result);
+        }
         Some(&_) | None => {
-            searchSheet();
+            ()
         }
     }
 }
