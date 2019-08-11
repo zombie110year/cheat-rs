@@ -5,7 +5,6 @@
 
 use crate::{CHEAT_DIR, SHEET_DIR};
 use crate::Sheet;
-use chrono::prelude::*;
 use dirs::home_dir;
 
 pub fn displaySheets() {
