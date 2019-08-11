@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use cheat::init;
-use cheat::search::{displaySheets, searchSheet, listSheets};
+use cheat::search::{displaySheets, listSheets, searchSheet};
 use cheat::sheet;
 use clap::{self, App, Arg, SubCommand};
 
@@ -40,9 +40,7 @@ fn main() {
             let result = searchSheet(String::from(pattern));
             displaySheets(&result);
         }
-        Some(&_) | None => {
-            ()
-        }
+        Some(&_) | None => (),
     }
 }
 
@@ -84,9 +82,8 @@ fn getParser() -> App<'static, 'static> {
 #[test]
 fn test_getArgs() {
     let parser = getParser();
-    let m = parser.get_matches_from(vec!["cheat", "show", "hello"]);
-    assert_eq!(m.value_of("NAME").unwrap(), "hello");
-    if let Some(sub_m) = m.subcommand_matches("show") {
-        sub_m.value_of("NAME");
-    }
+    let m = parser.get_matches_from(vec!["cheat", "read", "hello"]);
+    assert_eq!(m.subcommand_name(), Some("read"));
+    let a = m.subcommand_matches("read").unwrap().value_of("READNAME");
+    assert_eq!(a, Some("hello"));
 }

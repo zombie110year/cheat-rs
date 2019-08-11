@@ -56,15 +56,21 @@ impl Sheet {
     /// let s = Sheet::new(String::from("no-one-will-call-this-name.jfksjdkfksdjkfjkadf"));
     /// ```
     pub fn new(name: String) -> Self {
-        let tmp = Sheet {name: name.clone(), mtime: Local::now()};
+        let tmp = Sheet {
+            name: name.clone(),
+            mtime: Local::now(),
+        };
         if tmp.exists() {
             let meta = tmp
-            .path()
-            .metadata()
-            .expect("crate::sheet/ impl Sheet / fn exists: cannot read file metadata");
+                .path()
+                .metadata()
+                .expect("crate::sheet/ impl Sheet / fn exists: cannot read file metadata");
 
             let mtime = DateTime::from(meta.modified().expect("crate::sheet/ impl Sheet / fn exists: cannot transfer SystemTime to DateTime<Local>"));
-            return Sheet {name: name.clone(), mtime};
+            return Sheet {
+                name: name.clone(),
+                mtime,
+            };
         }
         return tmp;
     }

@@ -3,8 +3,8 @@
 //!
 //! list or search sheets
 
-use crate::{CHEAT_DIR, SHEET_DIR};
 use crate::Sheet;
+use crate::{CHEAT_DIR, SHEET_DIR};
 use dirs::home_dir;
 use fuzzy_matcher::skim::fuzzy_match;
 
@@ -12,10 +12,7 @@ use fuzzy_matcher::skim::fuzzy_match;
 pub fn displaySheets(list: &Vec<Sheet>) {
     let mut max_length: (usize, usize) = (0, 0);
     for item in list.iter() {
-        let (name, mtime) = (
-            format!("{}", item.name()),
-            format!("{}", item.mtime()),
-        );
+        let (name, mtime) = (format!("{}", item.name()), format!("{}", item.mtime()));
         let length = (name.len(), mtime.len());
         if length.0 > max_length.0 {
             max_length.0 = length.0;
@@ -39,10 +36,7 @@ pub fn displaySheets(list: &Vec<Sheet>) {
         w2 = max_length.1
     );
     for item in list.iter() {
-        let (name, mtime) = (
-            format!("{}", item.name()),
-            format!("{}", item.mtime()),
-        );
+        let (name, mtime) = (format!("{}", item.name()), format!("{}", item.mtime()));
         println!(
             "{1:<w2$}    {0:<w1$}",
             name,
@@ -91,7 +85,6 @@ pub fn searchSheet(pattern: String) -> Vec<Sheet> {
 fn matchSheet(name: &str, pattern: &str) -> bool {
     return fuzzy_match(name, pattern).is_some();
 }
-
 
 #[cfg(test)]
 mod tests {
