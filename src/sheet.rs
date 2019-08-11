@@ -2,6 +2,7 @@
 #![allow(non_snake_case)]
 use super::config::Configure;
 use crate::{CHEAT_DIR, SHEET_DIR};
+use chrono::prelude::*;
 /// # Sheet
 ///
 /// Discover and Read sheet file.
@@ -35,10 +36,18 @@ use std::process::Command;
 #[derive(Debug)]
 pub struct Sheet {
     name: String,
+    mtime: DateTime<Local>,
 }
 
 impl Sheet {
-    /// return a new Sheet instance, initialize with `name` argument
+    /// return a new Sheet instance, initialize with `name` argument.
+    /// if sheet file exists, read its metadata and set to instance,
+    /// else init with values:
+    ///
+    /// | field | value |
+    /// |:-----:|:-----:|
+    /// | `name` | `name` |
+    /// | `mtime` | `chrono::Local::now()` |
     ///
     /// ### Example
     ///
@@ -47,7 +56,17 @@ impl Sheet {
     /// let s = Sheet::new(String::from("no-one-will-call-this-name.jfksjdkfksdjkfjkadf"));
     /// ```
     pub fn new(name: String) -> Self {
-        return Sheet { name };
+        let tmp = Sheet {name: name.clone(), mtime: Local::now()};
+        if tmp.exists() {
+            let meta = tmp
+            .path()
+            .metadata()
+            .expect("crate::sheet/ impl Sheet / fn exists: cannot read file metadata");
+
+            let mtime = DateTime::from(meta.modified().expect("crate::sheet/ impl Sheet / fn exists: cannot transfer SystemTime to DateTime<Local>"));
+            return Sheet {name: name.clone(), mtime};
+        }
+        return tmp;
     }
     /// get reference of Sheet's `name`
     ///
@@ -60,6 +79,19 @@ impl Sheet {
     /// ```
     pub fn name(&self) -> &String {
         return &self.name;
+    }
+    /// string of mtime
+    ///
+    /// ### Example
+    ///
+    /// ```rust
+    /// use cheat::sheet::Sheet;
+    /// use chrono::prelude::*;
+    /// let s = Sheet::new(String::from("no-one-call-this-name.faklsdgngihaqeutb"));
+    /// assert_eq!(s.mtime(), format!("{}", Local::now().format("%Y-%m-%d %H:%M:%S")));
+    /// ```
+    pub fn mtime(&self) -> String {
+        return format!("{}", self.mtime.format("%Y-%m-%d %H:%M:%S"));
     }
     /// check weather the Sheet's file exists
     ///

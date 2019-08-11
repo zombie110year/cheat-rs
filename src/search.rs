@@ -4,6 +4,7 @@
 //! list or search sheets
 
 use crate::{CHEAT_DIR, SHEET_DIR};
+use crate::Sheet;
 use chrono::prelude::*;
 use dirs::home_dir;
 
@@ -12,8 +13,8 @@ pub fn displaySheets() {
     let mut max_length: (usize, usize) = (0, 0);
     for item in list.iter() {
         let (name, mtime) = (
-            format!("{}", item.0),
-            format!("{}", item.1.format("%Y-%m-%d %H:%M:%S")),
+            format!("{}", item.name()),
+            format!("{}", item.mtime()),
         );
         let length = (name.len(), mtime.len());
         if length.0 > max_length.0 {
@@ -39,8 +40,8 @@ pub fn displaySheets() {
     );
     for item in list.iter() {
         let (name, mtime) = (
-            format!("{}", item.0),
-            format!("{}", item.1.format("%Y-%m-%d %H:%M:%S")),
+            format!("{}", item.name()),
+            format!("{}", item.mtime()),
         );
         println!(
             "{1:<w2$}    {0:<w1$}",
@@ -52,8 +53,8 @@ pub fn displaySheets() {
     }
 }
 
-fn listSheets() -> Vec<(String, DateTime<Local>)> {
-    let mut info: Vec<(String, DateTime<Local>)> = Vec::new();
+fn listSheets() -> Vec<Sheet> {
+    let mut info: Vec<Sheet> = Vec::new();
     let dir = home_dir().unwrap().join(CHEAT_DIR).join(SHEET_DIR);
     for file in dir
         .read_dir()
@@ -61,11 +62,10 @@ fn listSheets() -> Vec<(String, DateTime<Local>)> {
     {
         match file {
             Ok(entry) => {
-                let metadata = entry.metadata().unwrap();
                 let path = entry.path();
                 let filename = path.file_name().unwrap().to_str().unwrap();
-                let mtime: DateTime<Local> = DateTime::from(metadata.modified().unwrap());
-                info.push((format!("{}", filename), mtime));
+                let s = Sheet::new(String::from(filename));
+                info.push(s);
             }
             Err(_) => {
                 panic!("error in listSheets");
