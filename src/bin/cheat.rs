@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 use cheat::sheet;
-use cheat::search::{listSheets, searchSheet};
+use cheat::search::{displaySheets, searchSheet};
 use clap::{self, App, Arg, SubCommand};
 
 fn main() {
@@ -26,7 +26,7 @@ fn main() {
             s.read();
         },
         Some("list") => {
-            listSheets();
+            displaySheets();
         },
         Some("search") => {
 

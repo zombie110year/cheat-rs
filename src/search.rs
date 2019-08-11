@@ -8,11 +8,12 @@ use chrono::prelude::*;
 
 const CHEAT_DIR: &str = ".cheat";
 
-pub fn listSheets() {
-    let list = _listSheets();
+pub fn displaySheets() {
+    let list = listSheets();
     let mut max_length: (usize, usize) = (0, 0);
     for item in list.iter() {
-        let length = (item.0.len(), item.1.len());
+        let (name, mtime) = (format!("{}", item.0), format!("{}", item.1.format("%Y-%m-%d %H:%M:%S")));
+        let length = (name.len(), mtime.len());
         if length.0 > max_length.0 {
             max_length.0 = length.0;
         }
@@ -20,15 +21,16 @@ pub fn listSheets() {
             max_length.1 = length.1;
         }
     }
-    println!("{:^w1$}\t{:<w2$}", "Name", "Last Modified", w1=max_length.0, w2=max_length.1);
-    println!("{:<w1$}\t{:<w2$}", "----", "-------------", w1=max_length.0, w2=max_length.1);
+    println!("{1:<w2$}    {0:<w1$}", "Name", "Last Modified", w1=max_length.0, w2=max_length.1);
+    println!("{1:<w2$}    {0:<w1$}", "----", "-------------", w1=max_length.0, w2=max_length.1);
     for item in list.iter() {
-        println!("{:<w1$}\t{:<w2$}", item.0, item.1, w1=max_length.0, w2=max_length.1);
+        let (name, mtime) = (format!("{}", item.0), format!("{}", item.1.format("%Y-%m-%d %H:%M:%S")));
+        println!("{1:<w2$}    {0:<w1$}", name, mtime, w1=max_length.0, w2=max_length.1);
     }
 }
 
-fn _listSheets() -> Vec<(String, String)> {
-    let mut info: Vec<(String, String)> = Vec::new();
+fn listSheets() -> Vec<(String, DateTime<Local>)> {
+    let mut info: Vec<(String, DateTime<Local>)> = Vec::new();
     let dir = home_dir().unwrap().join(CHEAT_DIR);
     for file in dir.read_dir().unwrap() {
         match file {
@@ -38,8 +40,7 @@ fn _listSheets() -> Vec<(String, String)> {
                 let filename = path.file_name().unwrap()
                     .to_str().unwrap();
                 let mtime: DateTime<Local> = DateTime::from(metadata.modified().unwrap());
-                let mtime = mtime.format("%Y-%m-%d %H:%M:%S");
-                info.push((format!("{}", filename), format!("{}", mtime)));
+                info.push((format!("{}", filename), mtime));
             },
             Err(_) => {
                 panic!("error in listSheets");
