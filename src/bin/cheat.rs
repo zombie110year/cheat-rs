@@ -32,7 +32,7 @@ fn main() {
         }
         Some("search") => {}
         Some(&_) | None => {
-            panic!("SubcommandParseError");
+            searchSheet();
         }
     }
 }
